@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 
 
@@ -35,11 +36,16 @@ def plot_confusion_matrix(y_true, y_pred, label_names):
 
     fig, ax = plt.subplots(1)
 
-    ax.matshow(confusion_matrix)
+    ax.matshow(confusion_matrix, cmap=mpl.colormaps['viridis'])
     ax.set_xticks(np.arange(n_classes))
     ax.set_yticks(np.arange(n_classes))
 
     ax.set_xticklabels(label_names)
     ax.set_yticklabels(label_names)
+
+    for i in range(n_classes):
+        for j in range(n_classes):
+            text = ax.text(j, i, confusion_matrix[i, j],
+                           ha="center", va="center", color="w")
 
     plt.show()
