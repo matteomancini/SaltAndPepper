@@ -7,7 +7,7 @@ class SimpleLSTMNetwork(nn.Module):
         super(SimpleLSTMNetwork, self).__init__()
         assert hidden_layers > 0, "At least one hidden layer required"
 
-        layer_list = [nn.LSTM(input_len, hidden_units, bidirectional=True), ExtractTensor()]
+        layer_list = [nn.LSTM(input_len, hidden_units, bidirectional=True, batch_first=True), ExtractTensor()]
         for i in range(hidden_layers-1):
             layer_list.extend([nn.Linear(2*hidden_units, 2*hidden_units), nn.ReLU()])
         layer_list.append(nn.Linear(2*hidden_units, num_classes))

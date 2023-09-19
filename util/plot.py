@@ -26,8 +26,8 @@ def plot_loss_accuracy(train_loss, train_acc,
 def plot_confusion_matrix(y_true, y_pred, label_names):
     n_classes = len(label_names)
     confusion_matrix = np.zeros((n_classes, n_classes))
-    y_true = [int(y.numpy()) for y in y_true]
-    y_pred = [int(y.numpy()) for y in y_pred]
+    y_true = [int(y.cpu().numpy()) for y in y_true]
+    y_pred = [int(y.cpu().numpy()) for y in y_pred]
     for idx in range(len(y_true)):
         target = y_true[idx]
         output = y_pred[idx]
@@ -47,5 +47,34 @@ def plot_confusion_matrix(y_true, y_pred, label_names):
         for j in range(n_classes):
             text = ax.text(j, i, confusion_matrix[i, j],
                            ha="center", va="center", color="w")
+
+    plt.show()
+
+
+def plot_dataloader_distribution(dataloader, label_names):
+    n_labels = len(label_names)
+    batch_distribution = {l: [] for l in range(n_labels)}
+
+    for _, b in dataloader:
+        for l in range(n_labels):
+            batch_distribution[l].append(int((b == l).sum()))
+
+    x = np.arange(len(batch_distribution[0]))
+    width = 0.25
+    multiplier = 0
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for label, freq in batch_distribution.items():
+        offset = width * multiplier
+        rects = ax.bar(x + offset, freq, width, label=label_names[label])
+        ax.bar_label(rects, padding=3)
+        multiplier += 1
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_xlabel('Batch index')
+    ax.set_ylabel('Number of samples')
+    ax.set_title('Dataloader class distribution')
+    ax.set_xticks(x + width, x)
+    ax.legend(loc='upper left')
 
     plt.show()

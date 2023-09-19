@@ -1,2 +1,2 @@
 from .comp import train
-from .plot import plot_confusion_matrix, plot_loss_accuracy
+from .plot import plot_confusion_matrix, plot_loss_accuracy, plot_dataloader_distribution
