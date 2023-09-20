@@ -52,11 +52,11 @@ def load_data(t_len=9000):
     samples = len(data)
     n_series = 1
     ts = np.zeros((samples, n_series, t_len), dtype=np.float32)
-    for n in range(n_series):
+    for n in range(samples):
         if len(data[n][0]) >= t_len:
             ts[n, 0, :] = data[n][0][:t_len]
         else:
-            ts[n, 0, len(data[n][0])] = data[n][0]
+            ts[n, 0, :len(data[n][0])] = data[n][0]
     labels = struct['labels'][0]
     return torch.from_numpy(ts), torch.from_numpy(labels)
 

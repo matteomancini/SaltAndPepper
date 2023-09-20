@@ -43,6 +43,10 @@ def plot_confusion_matrix(y_true, y_pred, label_names):
     ax.set_xticklabels(label_names)
     ax.set_yticklabels(label_names)
 
+    ax.set_xlabel('Predictions')
+    ax.set_ylabel('Targets')
+    ax.set_title('Confusion matrix')
+
     for i in range(n_classes):
         for j in range(n_classes):
             text = ax.text(j, i, confusion_matrix[i, j],

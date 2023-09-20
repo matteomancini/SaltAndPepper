@@ -1,5 +1,7 @@
 # Salt and Pepper (AKA: series and pictures) - A general structure for deep learning on signals/spectra with PyTorch
 
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/matteomancini/saltandpepper/blob/master/train.ipynb)
+
 This project defines the fundamental structure for work-in-progress deep learning projects aimed at classifying signals by means of the associated time series or the related spectral maps. All the packages required are listed in the `requirements.txt` file.
 
 ## Running the examples
