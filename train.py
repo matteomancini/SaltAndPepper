@@ -4,9 +4,10 @@ from util import train
 from torch.utils.data import DataLoader, random_split, WeightedRandomSampler
 
 dataset_name = 'cinc2017'
-model_name = 'SimpleLSTMNetwork'
-rearrange_tensor = True
-units = 50
+model_name = 'FullyConnectedNetwork'
+train_ae = False
+rearrange_tensor = False
+units = 150
 layers = 1
 batch = 150
 epochs = 10
@@ -32,5 +33,5 @@ class_weights = [1/sum([int(t[1])==l for t in list(train_data)]) for l in range(
 sample_weights = [class_weights[int(t[1])] for t in list(train_data)]
 sampler = WeightedRandomSampler(weights=sample_weights, num_samples=len(train_data), replacement=True)
 rebalanced_loader = DataLoader(train_data, sampler=sampler, batch_size=batch)
-train_loss, train_acc, validation_loss, validation_acc = train(
-    net, device, rebalanced_loader, validation_loader, epochs, lr=0.01)
+train_loss, train_acc, validation_loss, validation_acc, predicted_list, target_list = train(
+    net, device, rebalanced_loader, validation_loader, epochs, lr=0.01, no_labels=train_ae)

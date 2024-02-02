@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 def train(model, device, train_loader, validation_loader, epochs,
-          lr=0.01, weight_decay=0, loss_fn=nn.CrossEntropyLoss()):
+          lr=0.01, weight_decay=0, loss_fn=nn.CrossEntropyLoss(), no_labels=False):
     criterion = loss_fn
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     train_loss, validation_loss = [], []
@@ -19,7 +19,10 @@ def train(model, device, train_loader, validation_loader, epochs,
                 data, target = data.to(device), target.to(device)
                 output = model(data)
                 optimizer.zero_grad()
-                loss = criterion(output, target)
+                if not no_labels:
+                    loss = criterion(output, target)
+                else:
+                    loss = criterion(output, output)
                 loss.backward()
                 optimizer.step()
                 tepochs.set_postfix(loss=loss.item())
@@ -37,22 +40,27 @@ def train(model, device, train_loader, validation_loader, epochs,
                 data, target = data.to(device), target.to(device)
                 optimizer.zero_grad()
                 output = model(data)
-                loss = criterion(output, target)
-                tepochs.set_postfix(loss=loss.item())
+                if not no_labels:
+                    loss = criterion(output, target)
+                    tepochs.set_postfix(loss=loss.item())
+                    _, predicted = torch.max(output, 1)
+                    correct += (predicted == target).sum().item()
+                else:
+                    loss = criterion(output, output)
                 running_loss += loss.item()
-                _, predicted = torch.max(output, 1)
                 total += target.size(0)
-                correct += (predicted == target).sum().item()
             validation_loss.append(running_loss / len(validation_loader))
-            validation_acc.append(correct / total)
+            if not no_labels:
+                validation_acc.append(correct / total)
 
         target_list, predicted_list = [], []
-        for data, target in validation_loader:
-            data, target = data.to(device), target.to(device)
-            optimizer.zero_grad()
-            output = model(data)
-            _, predicted = torch.max(output, 1)
-            predicted_list.extend(predicted)
-            target_list.extend(target)
+        if not no_labels:
+            for data, target in validation_loader:
+                data, target = data.to(device), target.to(device)
+                optimizer.zero_grad()
+                output = model(data)
+                _, predicted = torch.max(output, 1)
+                predicted_list.extend(predicted)
+                target_list.extend(target)
 
     return train_loss, train_acc, validation_loss, validation_acc, predicted_list, target_list
